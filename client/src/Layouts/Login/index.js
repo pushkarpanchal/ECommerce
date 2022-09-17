@@ -34,7 +34,6 @@ const Login = (props) => {
       .catch((err) => {
         console.log(err);
       });
-    console.log("hello");
   };
 
   const submitSignUp = (e) => {
