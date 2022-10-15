@@ -1,6 +1,7 @@
 const express = require("express"); //Import the express dependency
 const app = express(); //Instantiate an express app, the main work horse of this server
 const port = 5000; //Save the port number where your server will be listening
+const bodyParser = require("body-parser");
 // const mongoose = require("mongoose");
 const routes = require("./src/routes/index");
 const products = require("./src/routes/products");
@@ -10,6 +11,13 @@ const connectDB = require("./src/config/db");
 connectDB();
 
 app.use(express.json({ extended: false }));
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
+app.use(express.static(__dirname + "client/public"));
+app.use("client/public", express.static("public"));
 app.use(routes);
 app.use(products);
 app.listen(port, () => {
