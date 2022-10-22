@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 // import { getToken } from "../../Hooks/useToken";
 import { connect } from "react-redux";
@@ -15,17 +15,40 @@ import {
   MenuItem,
   Tooltip,
   Avatar,
+  Badge,
 } from "@mui/material";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
+import axiosClient from "../axios";
+import { loginReducer } from "../redux/auth/actions";
+import { cartReducer } from "../redux/cart/actions";
 
 const Header = (props) => {
-  // const navigation = useNavigate();
+  const navigation = useNavigate();
+  const [navPages, setNavPages] = useState(["Products"]);
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [cartData, setCartData] = useState([]);
+  const settings = ["Profile", "Dashboard", "Logout"];
+
   useEffect(() => {
     console.log(props.auth);
+    if (props.auth) {
+      props.auth.userRoll === "admin" && setNavPages([...navPages, "Admin"]);
+      getCartData(props.auth);
+    }
   }, []);
-  const pages = ["Products", "Admin"];
-  const settings = ["Profile", "Account", "Dashboard", "Logout"];
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+
+  const getCartData = async (user) => {
+    axiosClient
+      .get("/cart-items")
+      .then((res) => {
+        setCartData([...res.data]);
+        props.cartReducer(res.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -38,9 +61,19 @@ const Header = (props) => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (setting) => {
     setAnchorElUser(null);
+    if (setting === "Logout") {
+      localStorage.removeItem("token");
+      props.loginReducer({});
+      navigation("/");
+    }
   };
+
+  const cartOpen = () => {
+    console.log("open cart page");
+  };
+
   return (
     <AppBar position="static">
       <Container maxWidth="xl">
@@ -92,7 +125,7 @@ const Header = (props) => {
                 display: { xs: "block", md: "none" },
               }}
             >
-              {pages.map((page) => (
+              {navPages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
@@ -118,10 +151,13 @@ const Header = (props) => {
             LOGO
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            {pages.map((page) => (
+            {navPages.map((page) => (
               <Button
                 key={page}
-                onClick={handleCloseNavMenu}
+                onClick={() => {
+                  handleCloseNavMenu();
+                  navigation("/dashborad/product");
+                }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
                 {page}
@@ -130,6 +166,11 @@ const Header = (props) => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            <IconButton onClick={cartOpen} sx={{ p: 0, mr: 5 }}>
+              <Badge badgeContent={cartData.length} color="success">
+                <ShoppingBasketIcon color="action" />
+              </Badge>
+            </IconButton>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                 <Avatar
@@ -155,7 +196,10 @@ const Header = (props) => {
               onClose={handleCloseUserMenu}
             >
               {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                <MenuItem
+                  key={setting}
+                  onClick={() => handleCloseUserMenu(setting)}
+                >
                   <Typography textAlign="center">{setting}</Typography>
                 </MenuItem>
               ))}
@@ -173,7 +217,10 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    loginReducer: (data) => dispatch(loginReducer(data)),
+    cartReducer: (data) => dispatch(cartReducer(data)),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

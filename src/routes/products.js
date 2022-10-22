@@ -13,9 +13,11 @@ const upload = multer({ storage: storage });
 const { body, check, validationResult } = require("express-validator");
 
 const Product = require("../models/Product");
+const auth = require("../midleware/auth");
 
 routes.post(
   "/add-product",
+  auth,
   // [
   //   [
   //     check("title", "Title is require").not().isEmpty(),

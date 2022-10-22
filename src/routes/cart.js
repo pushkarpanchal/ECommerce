@@ -32,14 +32,25 @@ routes.post(
       userId: ObjectId(userId),
     });
     if (itemAvail) {
-      itemAvail.quantity += quantity;
-      itemAvail.totalPrice += price * quantity;
-      const updatedCart = await Cart.findByIdAndUpdate(
-        itemAvail._id,
-        itemAvail,
-        { new: true }
-      );
-      res.json(updatedCart);
+      if (quantity === 0) {
+        const cartData = await Cart.findOne({
+          productId: ObjectId(productId),
+          userId: ObjectId(userId),
+        });
+        if (cartData) {
+          const removeData = removeItemFromCart(cartData._id);
+          res.json(removeData);
+        }
+      } else {
+        itemAvail.quantity += quantity;
+        itemAvail.totalPrice += price * quantity;
+        const updatedCart = await Cart.findByIdAndUpdate(
+          itemAvail._id,
+          itemAvail,
+          { new: true }
+        );
+        res.json(updatedCart);
+      }
     } else {
       try {
         let addToCart = new Cart({
@@ -67,12 +78,52 @@ routes.get("/cart-items", auth, async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   try {
-    const cartData = await Cart.find({ userId: ObjectId(req.user._id) });
+    const cartData = await Cart.aggregate([
+      { $match: { userId: ObjectId(req.user._id) } },
+      {
+        $lookup: {
+          from: "products",
+          localField: "productId",
+          foreignField: "_id",
+          as: "productData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$productData",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+    ]);
     res.json(cartData);
   } catch (error) {
     console.error("error", error.message);
     res.status(500).send({ msg: "Server errors" });
   }
 });
+
+routes.delete("/remove-cart-item/:id", auth, async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const cartData = await Cart.findById({ _id: ObjectId(req.params.id) });
+    if (cartData) {
+      removeItemFromCart(cartData._id);
+    } else {
+      res.status(500).send({ msg: "Item not found." });
+    }
+    res.json(cartData);
+  } catch (error) {
+    console.error("error", error.message);
+    res.status(500).send({ msg: "Server errors" });
+  }
+});
+
+const removeItemFromCart = async (itemId) => {
+  const removed = await Cart.deleteOne({ _id: itemId });
+  return removed;
+};
 
 module.exports = routes;

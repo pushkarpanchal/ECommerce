@@ -7,6 +7,7 @@ axiosClient.defaults.baseURL = "http://localhost:5000";
 axiosClient.defaults.headers = {
   "Content-Type": "application/json",
   Accept: "application/json",
+  Authorization: `${localStorage.getItem("token")}`,
 };
 
 axiosClient.defaults.withCredentials = true;

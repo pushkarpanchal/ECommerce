@@ -29,6 +29,7 @@ const Login = (props) => {
       })
       .then((res) => {
         props.loginReducer(res.data);
+        localStorage.setItem("token", res.data?.token);
         navigation("/dashborad");
       })
       .catch((err) => {
@@ -46,6 +47,7 @@ const Login = (props) => {
       })
       .then((res) => {
         props.loginReducer(res.data);
+        localStorage.setItem("token", res.data?.token);
         navigation("/dashborad");
       })
       .catch((err) => {
