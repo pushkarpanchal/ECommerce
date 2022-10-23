@@ -35,7 +35,6 @@ routes.post(
     const { title, roll, price, type, descrption } = req.body;
 
     try {
-      console.log("req", req.file);
       let product = new Product({
         title,
         roll,

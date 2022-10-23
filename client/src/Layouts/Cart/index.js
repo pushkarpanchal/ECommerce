@@ -14,21 +14,44 @@ import {
 } from "@mui/material";
 import { constant } from "../../Hooks/constent";
 import DeleteIcon from "@mui/icons-material/Delete";
+import axiosClient from "../../axios";
+import { cartReducer } from "../../redux/cart/actions";
 
 const Cart = (props) => {
-  const history = useNavigate();
+  const navigation = useNavigate();
   useEffect(() => {
-    console.log("cartDetails", props.cartDetails);
-  }, []);
+    if (props.cartDetails.length === 0) {
+      navigation("/dashboard");
+    }
+  }, [props.cartDetails]);
 
-  const handleDelete = async () => {
-    console.log("remove item");
+  const updateItem = (item, qut) => {
+    const data = {
+      productId: item.productId,
+      quantity: qut,
+      price: item.price,
+    };
+    axiosClient
+      .post("/add-to-cart", data)
+      .then((res) => {
+        axiosClient
+          .get("/cart-items")
+          .then((res) => {
+            props.cartReducer(res.data);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
+
   return (
     <div>
       {props.cartDetails.length > 0 &&
         props.cartDetails.map((item) => {
-          console.log("asa", item);
           return (
             <Card sx={{ maxWidth: "80%", m: "auto", mt: 5 }}>
               <Box sx={{ display: "flex" }}>
@@ -73,27 +96,30 @@ const Cart = (props) => {
                     <Button
                       variant="outlined"
                       size="small"
-                      sx={{ mr: 1, fontSize: 25 }}
+                      sx={{ mr: 1, height: 40, fontSize: 25 }}
+                      onClick={() => updateItem(item, -1)}
                     >
                       {"-"}
                     </Button>
                     <TextField
                       value={item.quantity}
                       disabled
+                      size="small"
                       inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-                      sx={{ width: 50, textAlign: "center" }}
+                      sx={{ width: 50, height: 40, textAlign: "center" }}
                     />
                     <Button
                       variant="outlined"
                       size="medium"
-                      sx={{ fontSize: 25 }}
+                      sx={{ m: 0, height: 40, fontSize: 25 }}
+                      onClick={() => updateItem(item, 1)}
                     >
                       {"+"}
                     </Button>
                     <Chip
                       label="Remove"
-                      onClick={handleDelete}
-                      onDelete={handleDelete}
+                      onClick={() => updateItem(item, 0)}
+                      onDelete={() => updateItem(item, 0)}
                       deleteIcon={<DeleteIcon />}
                       variant="outlined"
                     />
@@ -114,7 +140,9 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    cartReducer: (data) => dispatch(cartReducer(data)),
+  };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cart);

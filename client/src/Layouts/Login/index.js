@@ -30,7 +30,7 @@ const Login = (props) => {
       .then((res) => {
         props.loginReducer(res.data);
         localStorage.setItem("token", res.data?.token);
-        navigation("/dashborad");
+        navigation("/dashboard");
       })
       .catch((err) => {
         console.log(err);
@@ -48,7 +48,7 @@ const Login = (props) => {
       .then((res) => {
         props.loginReducer(res.data);
         localStorage.setItem("token", res.data?.token);
-        navigation("/dashborad");
+        navigation("/dashboard");
       })
       .catch((err) => {
         console.log(err);

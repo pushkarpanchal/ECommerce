@@ -31,12 +31,17 @@ const Header = (props) => {
   const settings = ["Profile", "Dashboard", "Logout"];
 
   useEffect(() => {
-    console.log(props.auth);
     if (props.auth) {
       props.auth.userRoll === "admin" && setNavPages([...navPages, "Admin"]);
       getCartData(props.auth);
     }
   }, []);
+
+  useEffect(() => {
+    if (props.cartDetails.length) {
+      setCartData([...props.cartDetails]);
+    }
+  }, [props.cartDetails]);
 
   const getCartData = async (user) => {
     axiosClient
@@ -71,7 +76,7 @@ const Header = (props) => {
   };
 
   const cartOpen = () => {
-    console.log("open cart page");
+    navigation("/dashboard/cart");
   };
 
   return (
@@ -156,7 +161,7 @@ const Header = (props) => {
                 key={page}
                 onClick={() => {
                   handleCloseNavMenu();
-                  navigation("/dashborad/product");
+                  navigation("/dashboard/product");
                 }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
@@ -213,6 +218,7 @@ const Header = (props) => {
 const mapStateToProps = (state) => {
   return {
     auth: state.auth.data,
+    cartDetails: state.cartDetails.data,
   };
 };
 

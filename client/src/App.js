@@ -8,7 +8,6 @@ function App() {
   return (
     <div>
       {/* {routes.map((route, index) => {
-        console.log(route);
         return (
           <Route
             key={index}

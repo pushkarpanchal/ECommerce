@@ -16,7 +16,7 @@ export default [
     element: <Login />,
   },
   {
-    path: "dashborad",
+    path: "dashboard",
     exact: true,
     element: <DefaultLayout />,
     children: [

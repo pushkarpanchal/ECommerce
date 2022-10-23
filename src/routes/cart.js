@@ -4,7 +4,6 @@ let mongoose = require("mongoose");
 const Cart = require("../models/Cart");
 const { body, check, params, validationResult } = require("express-validator");
 const auth = require("../midleware/auth");
-const { findByIdAndUpdate } = require("../models/Cart");
 
 let Schema = mongoose.Types,
   ObjectId = Schema.ObjectId;
@@ -32,7 +31,8 @@ routes.post(
       userId: ObjectId(userId),
     });
     if (itemAvail) {
-      if (quantity === 0) {
+      const updatedquatity = itemAvail.quantity + quantity;
+      if (updatedquatity === 0 || quantity === 0) {
         const cartData = await Cart.findOne({
           productId: ObjectId(productId),
           userId: ObjectId(userId),
@@ -102,24 +102,24 @@ routes.get("/cart-items", auth, async (req, res) => {
   }
 });
 
-routes.delete("/remove-cart-item/:id", auth, async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-  try {
-    const cartData = await Cart.findById({ _id: ObjectId(req.params.id) });
-    if (cartData) {
-      removeItemFromCart(cartData._id);
-    } else {
-      res.status(500).send({ msg: "Item not found." });
-    }
-    res.json(cartData);
-  } catch (error) {
-    console.error("error", error.message);
-    res.status(500).send({ msg: "Server errors" });
-  }
-});
+// routes.delete("/remove-cart-item/:id", auth, async (req, res) => {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).json({ errors: errors.array() });
+//   }
+//   try {
+//     const cartData = await Cart.findById({ _id: ObjectId(req.params.id) });
+//     if (cartData) {
+//       removeItemFromCart(cartData._id);
+//     } else {
+//       res.status(500).send({ msg: "Item not found." });
+//     }
+//     res.json(cartData);
+//   } catch (error) {
+//     console.error("error", error.message);
+//     res.status(500).send({ msg: "Server errors" });
+//   }
+// });
 
 const removeItemFromCart = async (itemId) => {
   const removed = await Cart.deleteOne({ _id: itemId });
