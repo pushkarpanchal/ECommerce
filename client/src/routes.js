@@ -6,6 +6,7 @@ import Product from "./Layouts/Product";
 import ProductDetail from "./Layouts/ProductDetail";
 import Dashboard from "./Layouts/Dashboard";
 import Cart from "./Layouts/Cart";
+import Admin from "./Layouts/Admin";
 
 // Route Views
 
@@ -37,6 +38,11 @@ export default [
         element: <Cart />,
         exact: true,
         path: "cart",
+      },
+      {
+        element: <Admin />,
+        exact: true,
+        path: "admin",
       },
     ],
   },

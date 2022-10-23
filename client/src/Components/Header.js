@@ -161,7 +161,9 @@ const Header = (props) => {
                 key={page}
                 onClick={() => {
                   handleCloseNavMenu();
-                  navigation("/dashboard/product");
+
+                  page === "Products" && navigation("/dashboard/product");
+                  page === "Admin" && navigation("/dashboard/admin");
                 }}
                 sx={{ my: 2, color: "white", display: "block" }}
               >
