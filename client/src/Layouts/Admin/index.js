@@ -12,15 +12,12 @@ import {
   Checkbox,
   FormLabel,
   FormControlLabel,
+  Modal,
 } from "@mui/material";
-import UploadImage from "../../Components/UploadImage";
+import ProductModel from "../../Components/ProductModel";
 
 const Admin = (props) => {
-  const [file, setFile] = useState(null);
-  const [productName, setProductName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [categories, setCategories] = useState("");
+  const [open, setOpen] = useState(false);
 
   const categoriesList = [
     { label: "Normal", value: "normal" },
@@ -32,92 +29,17 @@ const Admin = (props) => {
   const submit = () => {
     console.log("submit");
   };
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
   return (
     <Container maxWidth="xl">
-      <form onSubmit={submit}>
-        <Grid item sx={{ mb: 1 }}>
-          <FormControl sx={{ width: "100%" }}>
-            <UploadImage
-              image={file}
-              onChange={(file) => {
-                setFile(file);
-              }}
-            />
-          </FormControl>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel htmlFor="name">Product name</InputLabel>
-            <Input
-              id="name"
-              type="text"
-              required
-              onChange={(e) => setProductName(e.target.value)}
-              aria-describedby="my-helper-text"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel htmlFor="price">Price</InputLabel>
-            <Input
-              id="price"
-              type="number"
-              required
-              onChange={(e) => setPrice(e.target.value)}
-              aria-describedby="my-helper-text"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <FormControl sx={{ width: "100%" }}>
-            <InputLabel htmlFor="description">Description</InputLabel>
-            <Input
-              id="description"
-              type="text"
-              multiline
-              maxRows={4}
-              required
-              onChange={(e) => setDescription(e.target.value)}
-              aria-describedby="my-helper-text"
-            />
-          </FormControl>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <FormControl sx={{ width: "100%" }}>
-            <FormLabel htmlFor="description">Categories</FormLabel>
-            {categoriesList.map((item, index) => {
-              return (
-                <FormControlLabel
-                  key={`item${index}`}
-                  control={
-                    <Checkbox
-                      value={item.value}
-                      onChange={(e) => {
-                        console.log(e.target.checked, e.target.value);
-                      }}
-                    />
-                  }
-                  label={item.label}
-                />
-              );
-            })}
-          </FormControl>
-        </Grid>
-        <Grid item sx={{ mb: 1 }}>
-          <Button variant="contained" type="submit">
-            Create
-          </Button>
-          <Link
-            href="#"
-            onClick={() => navigation("/dashboard")}
-            underline="hover"
-            sx={{ ml: 4 }}
-          >
-            {"cancel"}
-          </Link>
-        </Grid>
-      </form>
+      <Button sx={{ textAlign: "center", margin: 5 }} onClick={handleOpen}>
+        Add New Product
+      </Button>
+      <ProductModel open={open} setOpen={(value) => setOpen(value)} />
     </Container>
   );
 };

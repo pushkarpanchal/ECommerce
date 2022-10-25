@@ -20,8 +20,7 @@ import {
 
 const UploadImage = (props) => {
   const handleChange = (e) => {
-    console.log(e.target.files);
-    props.onChange(URL.createObjectURL(e.target.files[0]));
+    props.onChange(e.target.files[0], URL.createObjectURL(e.target.files[0]));
   };
   return (
     <Container
@@ -36,8 +35,8 @@ const UploadImage = (props) => {
         Upload Product image
       </FormLabel>
       <div className="fileUpload">
-        <input type="file" onChange={handleChange} />
-        <img src={props.image} />
+        <input type="file" onChange={handleChange} accept=".png, .jpg, .jpeg" />
+        <img src={props.showImage} />
       </div>
     </Container>
   );

@@ -3,9 +3,11 @@ const routes = express.Router();
 const multer = require("multer");
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    console.log("file1", file);
     cb(null, "client/public/products");
   },
   filename: function (req, file, cb) {
+    console.log("file", file);
     cb(null, Date.now() + "-" + file.originalname);
   },
 });
@@ -31,16 +33,16 @@ routes.post(
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-
-    const { title, roll, price, type, descrption } = req.body;
+    console.log("req.file", req.file);
+    const { title, price, description, categories, type } = req.body;
 
     try {
       let product = new Product({
         title,
-        roll,
-        type,
         price,
-        descrption,
+        description,
+        categories,
+        type,
         productImage: req.file,
       });
 
@@ -59,8 +61,12 @@ routes.get("/prodcutslist", async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+  let query = {};
+  if (req.query.search) {
+    query.title = req.query.search;
+  }
   try {
-    const productData = await Product.find({});
+    const productData = await Product.find(query);
     res.json(productData);
   } catch (error) {
     console.error("error", error.message);

@@ -3,8 +3,17 @@
   height: auto;
   margin-top: 10px;
 }
-img {
+.fileUpload img {
   margin: 30px;
   width: 100%;
   height: auto;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-model .product-type-select {
+  display: block ;
 }

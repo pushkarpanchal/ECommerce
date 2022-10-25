@@ -78,9 +78,7 @@ const Cart = (props) => {
                     </Typography>
                   </Box>
                   <Typography variant="body2" color="text.secondary">
-                    Lizards are a widespread group of squamate reptiles, with
-                    over 6,000 species, ranging across all continents except
-                    Antarctica
+                    {item.description}
                   </Typography>
                   <Box sx={{ display: "flex" }}>
                     <Typography color="text.secondary" sx={{ mr: 5 }}>

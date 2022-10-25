@@ -21,6 +21,7 @@ import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import axiosClient from "../axios";
 import { loginReducer } from "../redux/auth/actions";
 import { cartReducer } from "../redux/cart/actions";
+import "./Component.css";
 
 const Header = (props) => {
   const navigation = useNavigate();
@@ -131,7 +132,14 @@ const Header = (props) => {
               }}
             >
               {navPages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem
+                  key={page}
+                  onClick={() => {
+                    handleCloseNavMenu();
+                    page === "Products" && navigation("/dashboard/product");
+                    page === "Admin" && navigation("/dashboard/admin");
+                  }}
+                >
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
