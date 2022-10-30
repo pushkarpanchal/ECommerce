@@ -39,9 +39,7 @@ const Header = (props) => {
   }, []);
 
   useEffect(() => {
-    if (props.cartDetails.length) {
-      setCartData([...props.cartDetails]);
-    }
+    setCartData([...props.cartDetails]);
   }, [props.cartDetails]);
 
   const getCartData = async (user) => {

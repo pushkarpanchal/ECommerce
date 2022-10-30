@@ -1,6 +1,9 @@
 const express = require("express");
 const routes = express.Router();
 const multer = require("multer");
+let mongoose = require("mongoose");
+let ObjectId = mongoose.Types.ObjectId;
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     console.log("file1", file);
@@ -65,8 +68,29 @@ routes.get("/prodcutslist", async (req, res) => {
   if (req.query.search) {
     query.title = req.query.search;
   }
+  if (req.query.type) {
+    query.type = req.query.type;
+  }
   try {
     const productData = await Product.find(query);
+    res.json(productData);
+  } catch (error) {
+    console.error("error", error.message);
+    res.status(500).send({ msg: "Server errors" });
+  }
+});
+
+routes.delete("/deleteproduct/:id", async (req, res) => {
+  const errors = validationResult(req);
+  console.log("req.params.id", req.params.id, errors);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const productData = await Product.findOneAndRemove({
+      _id: ObjectId(req.params.id),
+    });
     res.json(productData);
   } catch (error) {
     console.error("error", error.message);

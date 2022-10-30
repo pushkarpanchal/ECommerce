@@ -8,7 +8,16 @@ axiosClient.defaults.headers = {
   "Content-Type": "application/json",
   Accept: "application/json",
   Authorization: `${localStorage.getItem("token")}`,
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers":
+    "Origin, X-Requested-With, Content-Type, Accept",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
 };
+
+// axiosClient.defaults.headers.add(
+//   "Access-Control-Allow-Methods",
+//   "GET, POST, PUT, DELETE"
+// );
 
 axiosClient.defaults.withCredentials = true;
 axiosClient.interceptors.response.use(

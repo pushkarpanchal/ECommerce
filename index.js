@@ -8,12 +8,20 @@ const products = require("./src/routes/products");
 require("dotenv").config();
 const connectDB = require("./src/config/db");
 const cart = require("./src/routes/cart");
+const cors = require("cors");
 connectDB();
 
 app.use(express.json({ extended: false }));
 app.use(
   bodyParser.urlencoded({
     extended: true,
+  })
+);
+app.use(
+  cors({
+    credentials: true,
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
 app.use(express.static(__dirname + "client/public"));
