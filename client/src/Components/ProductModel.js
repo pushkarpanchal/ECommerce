@@ -58,6 +58,7 @@ const Admin = (props) => {
         setDescription("");
         setCategories(["normal"]);
         setPrice("");
+        setType("clothes");
         axiosClient
           .get("/prodcutslist")
           .then((res) => {

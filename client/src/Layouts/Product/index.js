@@ -60,7 +60,7 @@ const Product = (props) => {
     axiosClient
       .get(`/prodcutslist${search}`)
       .then((res) => {
-        console.log("list", res);
+        props.productsReducer(res.data);
       })
       .catch((err) => {
         console.log(err);

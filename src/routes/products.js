@@ -64,7 +64,10 @@ routes.get("/prodcutslist", async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  let query = {};
+  let query = {
+    title: "",
+    type: "",
+  };
   if (req.query.search) {
     query.title = req.query.search;
   }
@@ -72,7 +75,30 @@ routes.get("/prodcutslist", async (req, res) => {
     query.type = req.query.type;
   }
   try {
-    const productData = await Product.find(query);
+    const productData = await Product.aggregate([
+      {
+        $addFields: {
+          titleLow: {
+            $toLower: "$title",
+          },
+        },
+      },
+      {
+        $match: {
+          $or: [
+            {
+              titleLow: {
+                $regex: query.title,
+                $options: "g",
+              },
+            },
+            {
+              type: query.type,
+            },
+          ],
+        },
+      },
+    ]);
     res.json(productData);
   } catch (error) {
     console.error("error", error.message);
