@@ -34,12 +34,18 @@ form {
 .heroImg {
   width: 100%;
   max-height: 50vh;
+  min-height: 35vh;
+  margin-bottom: 1rem;
 }
 
 .heroImg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.deshboard-list-item {
+  margin-bottom: 1rem;
 }
 
 @keyframes App-logo-spin {
